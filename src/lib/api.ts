@@ -80,6 +80,17 @@ export const api = {
     getPopular: () => fetcher<ServiceItem[]>("/public/services/popular"),
     getPromotions: () => fetcher<ServiceItem[]>("/public/services/promotions"),
     getByShop: (shopId: number) => fetcher<ServiceItem[]>(`/public/services/shop/${shopId}`),
+    create: (data: any) => fetcher<{ message: string }>("/services", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    update: (id: number, data: any) => fetcher<{ message: string }>(`/services/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+    delete: (id: number) => fetcher<{ message: string }>(`/services/${id}`, {
+      method: "DELETE",
+    }),
   },
 
   events: {

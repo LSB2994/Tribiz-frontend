@@ -28,7 +28,13 @@ export default function NewServicePage() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await api.services.create(service);
+      const payload = {
+        name: service.name || "",
+        description: service.description || "",
+        price: service.price || 0,
+        durationMinutes: service.durationMinutes || 60
+      };
+      await api.services.create(payload);
       router.push("/dashboard/provider/services");
     } catch (error) {
       console.error("Error creating service:", error);

@@ -34,19 +34,34 @@ export default function EditServicePage() {
   }, [id]);
 
   const handleSave = async (e: React.FormEvent) => {
-
     e.preventDefault();
     if (!service) return;
     
     setIsSaving(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Saving service:", service);
+      const payload = {
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        durationMinutes: service.durationMinutes
+      };
+      await api.services.update(service.id, payload);
       router.push("/dashboard/provider/services");
     } catch (error) {
       console.error("Error saving service:", error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!service || !confirm("Are you sure you want to delete this service?")) return;
+    
+    try {
+      await api.services.delete(service.id);
+      router.push("/dashboard/provider/services");
+    } catch (error) {
+      console.error("Error deleting service:", error);
     }
   };
 
@@ -78,7 +93,11 @@ export default function EditServicePage() {
           <p className="text-muted-foreground mt-1 font-medium italic">Update your service offerings, pricing, and timing.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="text-destructive border-destructive/20 hover:bg-destructive/10 font-bold">
+          <Button 
+            variant="outline" 
+            className="text-destructive border-destructive/20 hover:bg-destructive/10 font-bold"
+            onClick={handleDelete}
+          >
             <Trash2 className="h-4 w-4 mr-2" /> Delete Service
           </Button>
           <Button 
