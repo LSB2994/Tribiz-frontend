@@ -98,6 +98,17 @@ export const api = {
     getById: (id: number) => fetcher<EventItem>(`/public/events/${id}`),
     getByShop: (shopId: number) => fetcher<EventItem[]>(`/public/events/shop/${shopId}`),
     getMyEvents: () => fetcher<EventItem[]>("/events/my-events"),
+    create: (data: any) => fetcher<{ message: string }>("/events", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    update: (id: number, data: any) => fetcher<{ message: string }>(`/events/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+    delete: (id: number) => fetcher<{ message: string }>(`/events/${id}`, {
+      method: "DELETE",
+    }),
     getMyUpcomingEvents: () => fetcher<EventItem[]>("/events/my-events/upcoming"),
     getComments: (eventId: number) => fetcher<Comment[]>(`/events/${eventId}/comments`),
     addComment: (eventId: number, data: any) => fetcher<Comment>(`/events/${eventId}/comments`, {

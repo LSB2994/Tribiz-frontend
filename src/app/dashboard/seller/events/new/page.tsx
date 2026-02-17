@@ -28,7 +28,15 @@ export default function NewEventPage() {
     e?.preventDefault();
     setIsSaving(true);
     try {
-      await api.events.create(event);
+      const payload = {
+        title: event.title || "",
+        description: event.description || "",
+        image: event.image || "",
+        startDate: event.startDate || new Date().toISOString(),
+        endDate: event.endDate || new Date().toISOString(),
+        location: event.location || ""
+      };
+      await api.events.create(payload);
       router.push("/dashboard/seller/events");
     } catch (error) {
       console.error("Error creating event:", error);

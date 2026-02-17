@@ -39,13 +39,31 @@ export default function EditEventPage() {
     
     setIsSaving(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Saving event:", event);
+      const payload = {
+        title: event.title,
+        description: event.description,
+        image: event.image,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        location: event.location
+      };
+      await api.events.update(event.id, payload);
       router.push("/dashboard/seller/events");
     } catch (error) {
       console.error("Error saving event:", error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!event || !confirm("Are you sure you want to delete this event?")) return;
+    
+    try {
+      await api.events.delete(event.id);
+      router.push("/dashboard/seller/events");
+    } catch (error) {
+      console.error("Error deleting event:", error);
     }
   };
 
