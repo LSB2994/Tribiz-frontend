@@ -36,21 +36,40 @@ export default function EditProductPage() {
   }, [id]);
 
   const handleSave = async (e: React.FormEvent) => {
-
     e.preventDefault();
     if (!product) return;
     
     setIsSaving(true);
     try {
-      // Assuming api.products.update exists or using a generic update method
-      // In this demo, we'll just simulate a delay and success
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Saving product:", product);
+      const payload = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        image: product.image,
+        status: product.status,
+        barcode: product.barcode,
+        category: product.category,
+        discount: product.discount,
+        buyOneGetOne: product.buyOneGetOne
+      };
+      await api.products.update(product.id, payload);
       router.push("/dashboard/seller/products");
     } catch (error) {
       console.error("Error saving product:", error);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!product || !confirm("Are you sure you want to delete this product?")) return;
+    
+    try {
+      await api.products.delete(product.id);
+      router.push("/dashboard/seller/products");
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -82,7 +101,11 @@ export default function EditProductPage() {
           <p className="text-muted-foreground mt-1 font-medium italic">Update your product details and inventory settings.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="text-destructive border-destructive/20 hover:bg-destructive/10 font-bold">
+          <Button 
+            variant="outline" 
+            className="text-destructive border-destructive/20 hover:bg-destructive/10 font-bold"
+            onClick={handleDelete}
+          >
             <Trash2 className="h-4 w-4 mr-2" /> Delete Product
           </Button>
           <Button 

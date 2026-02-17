@@ -31,7 +31,19 @@ export default function NewProductPage() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await api.products.create(product);
+      const payload = {
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price || 0,
+        quantity: product.quantity || 0,
+        image: product.image || "",
+        status: product.status || "AVAILABLE",
+        barcode: product.barcode || "",
+        category: product.category || "",
+        discount: product.discount || 0,
+        buyOneGetOne: product.buyOneGetOne || false
+      };
+      await api.products.create(payload);
       router.push("/dashboard/seller/products");
     } catch (error) {
       console.error("Error creating product:", error);

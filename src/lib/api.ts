@@ -72,6 +72,17 @@ export const api = {
     getPromotions: () => fetcher<Product[]>("/public/products/promotions"),
     getByCategory: (category: string) => fetcher<Product[]>(`/public/products/category/${category}`),
     getByShop: (shopId: number) => fetcher<Product[]>(`/public/products/shop/${shopId}`),
+    create: (data: any) => fetcher<{ message: string }>("/products", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    update: (id: number, data: any) => fetcher<{ message: string }>(`/products/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+    delete: (id: number) => fetcher<{ message: string }>(`/products/${id}`, {
+      method: "DELETE",
+    }),
   },
 
   services: {
