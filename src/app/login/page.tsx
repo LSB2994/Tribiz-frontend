@@ -39,13 +39,23 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      // Handle the token from social login redirect
+      localStorage.setItem("token", token);
+      setSuccess("Social login successful! Redirecting...");
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
+    }
+
     if (searchParams.get("registered")) {
       setSuccess("Registration successful! Please login with your new account.");
     }
     if (searchParams.get("error") === "unauthorized") {
       setError("You must be logged in as an administrator to access the admin panel.");
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,8 +79,6 @@ function LoginForm() {
       if (result?.error) {
         setError("Login failed. Please check your credentials.");
       } else if (result?.ok) {
-        // Update AuthContext with NextAuth session data
-        // For now, keep the existing auth context, but ideally migrate to NextAuth session
         router.push("/");
       }
     } catch (err: any) {
@@ -84,10 +92,17 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/" });
+      // Call the backend to get the social login URL
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/social/google`);
+      const data = await response.json();
+      if (data.authUrl) {
+         // The backend returns a relative URL like /oauth2/authorization/google
+         // We need the full URL: BACKEND_BASE + authUrl
+         const backendBase = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '');
+         window.location.href = `${backendBase}${data.authUrl}`;
+      }
     } catch (error) {
       setError("Google login failed.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -95,10 +110,14 @@ function LoginForm() {
   const handleGitHubLogin = async () => {
     setIsLoading(true);
     try {
-      await signIn("github", { callbackUrl: "/" });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/social/github`);
+      const data = await response.json();
+      if (data.authUrl) {
+         const backendBase = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '');
+         window.location.href = `${backendBase}${data.authUrl}`;
+      }
     } catch (error) {
       setError("GitHub login failed.");
-    } finally {
       setIsLoading(false);
     }
   };

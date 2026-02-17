@@ -1,6 +1,6 @@
 import { Shop, Product, ServiceItem, AuthResponse, EventItem, User, Comment } from "@/types";
 
-const API_BASE_URL = "http://localhost:8085/api";
+const API_BASE_URL = "http://localhost:8080/api";
 
 async function fetcher<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
